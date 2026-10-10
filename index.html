@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Drone View Mongolia</title>
 <meta name="description" content="Монголын байгаль, нүүдэлчин соёлыг 4K дрон видео, зургаар дэлхийд танилцуулдаг ашгийн бус вэб. Introducing Mongolia from above in 4K drone footage.">
 <meta property="og:title" content="Drone View Mongolia">
 <meta property="og:description" content="Монголыг дээрээс нь хар. See Mongolia from above.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231c58b8'/%3E%3Cpath d='M4 22c4-8 7-8 10-3s6 3 14-9' fill='none' stroke='%23fff' stroke-width='2.4'/%3E%3C/svg%3E">
-<title>Drone View Mongolia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Onest:wght@400;500;600&family=Unbounded:wght@500;600&display=swap">
@@ -16,7 +16,8 @@
 body { margin: 0; }
 img { max-width: 100%; }
 [hidden] { display: none !important; }
-/* Layout: sticky bar with three pages (home, news, contact). Home has a hero with a drifting contour map and live Mongolia coordinates, video cards and a photo grid. */
+
+/* Layout: sticky bar with four pages (home, videos anchor, news, contact) plus a hidden admin page. Home has a hero with a drifting contour map and live Mongolia coordinates, video cards and a photo grid. */
 :root {
   --bg: #e8edee;
   --surface: #f4f7f7;
@@ -27,6 +28,7 @@ img { max-width: 100%; }
   --accent: #1c58b8;
   --on-accent: #ffffff;
   --ochre: #9c5b14;
+  --danger: #b3261e;
   --c1: #a3b8be;
   --c2: #1c58b8;
   --font-display: "Unbounded", "Onest", system-ui, sans-serif;
@@ -44,6 +46,7 @@ img { max-width: 100%; }
     --accent: #6fa8ff;
     --on-accent: #0b1519;
     --ochre: #e3a65a;
+    --danger: #ff8a80;
     --c1: #2a424b;
     --c2: #4f8fe8;
     color-scheme: dark;
@@ -59,6 +62,7 @@ img { max-width: 100%; }
   --accent: #6fa8ff;
   --on-accent: #0b1519;
   --ochre: #e3a65a;
+  --danger: #ff8a80;
   --c1: #2a424b;
   --c2: #4f8fe8;
   color-scheme: dark;
@@ -76,9 +80,10 @@ a { color: inherit; }
 .bar .wrap { display: flex; align-items: center; gap: 8px 16px; min-height: 56px; flex-wrap: wrap; padding-block: 6px; }
 .brand { font: 600 .78rem/1 var(--font-display); letter-spacing: .05em; text-transform: uppercase; text-decoration: none; margin-right: auto; }
 .brand span { color: var(--accent); }
-.bar nav { display: flex; gap: 12px; }
+.bar nav { display: flex; gap: 4px 12px; flex-wrap: wrap; }
 .bar nav a { font: 500 .8rem var(--font-mono); text-decoration: none; color: var(--muted); padding: 8px 4px; }
 .bar nav a:hover { color: var(--fg); }
+.bar nav a[aria-current="page"] { color: var(--fg); box-shadow: inset 0 -2px 0 var(--accent); }
 .ctl { font: 500 .75rem var(--font-mono); background: transparent; color: var(--fg); border: 1px solid var(--line); border-radius: 4px; padding: 6px 10px; cursor: pointer; }
 .ctl:hover { border-color: var(--accent); }
 
@@ -91,7 +96,7 @@ a { color: inherit; }
 h1 { font: 600 clamp(2rem, 6.4vw, 4.2rem)/1.08 var(--font-display); letter-spacing: -.01em; margin: 14px 0 18px; max-width: 14em; text-wrap: balance; }
 .lead { max-width: 38rem; color: var(--muted); font-size: clamp(1rem, 1.6vw, 1.15rem); margin: 0; }
 .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
-.btn { display: inline-flex; align-items: center; gap: 6px; font: 600 .9rem/1.2 var(--font-body); padding: 11px 18px; border-radius: 4px; background: var(--accent); color: var(--on-accent); text-decoration: none; border: 1px solid var(--accent); }
+.btn { display: inline-flex; align-items: center; gap: 6px; font: 600 .9rem/1.2 var(--font-body); padding: 11px 18px; border-radius: 4px; background: var(--accent); color: var(--on-accent); text-decoration: none; border: 1px solid var(--accent); cursor: pointer; }
 .btn:hover { filter: brightness(1.08); }
 .btn.ghost { background: transparent; color: var(--fg); border-color: var(--line); }
 .btn.ghost:hover { border-color: var(--accent); filter: none; }
@@ -107,44 +112,47 @@ h1 { font: 600 clamp(2rem, 6.4vw, 4.2rem)/1.08 var(--font-display); letter-spaci
 section { padding-block: clamp(48px, 8vw, 88px); }
 h2 { font: 600 clamp(1.4rem, 3vw, 2rem)/1.15 var(--font-display); margin: 0 0 10px; text-wrap: balance; }
 .sub { color: var(--muted); margin: 0 0 32px; max-width: 40rem; }
+.empty { border: 1px dashed var(--line); border-radius: 6px; padding: 28px; color: var(--muted); max-width: 40rem; }
 
-/* cards */
+/* video cards */
 .cards { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
 .thumb { position: relative; aspect-ratio: 16 / 9; max-width: 100%; background: var(--surface-2); }
 .thumb canvas { width: 100%; height: 100%; display: block; }
-.tags { position: absolute; inset: 10px 10px auto 10px; display: flex; justify-content: space-between; gap: 8px; }
-.tag { font: 500 .68rem var(--font-mono); letter-spacing: .08em; padding: 3px 7px; border-radius: 3px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); }
 .thumb .play { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: #000; cursor: pointer; display: block; }
 .thumb .play img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .92; }
 .thumb .play:hover img { opacity: 1; }
 .thumb .tri { position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%; background: var(--accent); }
 .thumb .tri::after { content: ""; position: absolute; left: 22px; top: 17px; border-left: 17px solid var(--on-accent); border-top: 11px solid transparent; border-bottom: 11px solid transparent; }
 .thumb iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-.tags { pointer-events: none; }
+.tags { position: absolute; inset: 10px 10px auto 10px; display: flex; justify-content: space-between; gap: 8px; pointer-events: none; }
+.tag { font: 500 .68rem var(--font-mono); letter-spacing: .08em; padding: 3px 7px; border-radius: 3px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); }
 .card .body { padding: 16px; display: grid; gap: 10px; align-content: start; flex: 1; min-width: 0; }
 .kind { font: 500 .7rem var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ochre); }
-.card h3 { font: 600 1.05rem/1.25 var(--font-display); margin: 0; }
-.card p { margin: 0; color: var(--muted); font-size: .93rem; }
+.card h3 { font: 600 1.05rem/1.25 var(--font-display); margin: 0; overflow-wrap: anywhere; }
+.card p { margin: 0; color: var(--muted); font-size: .93rem; overflow-wrap: anywhere; }
 .coord { font: 400 .75rem var(--font-mono); color: var(--muted); align-self: end; padding-top: 4px; }
 .card .btn { justify-self: start; }
 
 /* photos */
 .photos { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); }
-.photo { margin: 0; display: grid; gap: 10px; min-width: 0; }
+.photo { margin: 0; display: grid; gap: 10px; min-width: 0; align-content: start; }
 .ph { position: relative; aspect-ratio: 4 / 3; max-width: 100%; background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
 .ph canvas, .ph img { width: 100%; height: 100%; display: block; object-fit: cover; }
-.photo figcaption { font: 400 .8rem var(--font-mono); color: var(--muted); }
+.ph-btn { all: unset; display: block; width: 100%; height: 100%; cursor: zoom-in; }
+.ph-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; }
+.photo figcaption { font: 400 .8rem var(--font-mono); color: var(--muted); overflow-wrap: anywhere; }
 .photo figcaption b { color: var(--fg); font-weight: 500; }
+.lb { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .9); display: grid; place-items: center; padding: 16px; cursor: zoom-out; }
+.lb img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.lb .lb-x { position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: 16px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .4); background: transparent; color: #fff; font-size: 1.4rem; line-height: 1; cursor: pointer; }
 
 /* news and contact */
-.bar nav a[aria-current="page"] { color: var(--fg); box-shadow: inset 0 -2px 0 var(--accent); }
-.empty { border: 1px dashed var(--line); border-radius: 6px; padding: 28px; color: var(--muted); max-width: 40rem; }
 .news { display: grid; max-width: 44rem; }
 .news article { border-top: 1px solid var(--line); padding-block: 20px; display: grid; gap: 6px; }
 .news time { font: 500 .75rem var(--font-mono); letter-spacing: .08em; color: var(--ochre); }
-.news h3 { margin: 0; font: 600 1.1rem/1.3 var(--font-display); }
-.news p { margin: 0; color: var(--muted); }
+.news h3 { margin: 0; font: 600 1.1rem/1.3 var(--font-display); overflow-wrap: anywhere; }
+.news p { margin: 0; color: var(--muted); white-space: pre-line; overflow-wrap: anywhere; }
 .contact { display: grid; max-width: 40rem; margin: 0; }
 .contact div { display: grid; grid-template-columns: 8rem minmax(0, 1fr); gap: 12px; padding-block: 16px; border-top: 1px solid var(--line); }
 .contact div:last-child { border-bottom: 1px solid var(--line); }
@@ -153,13 +161,47 @@ h2 { font: 600 clamp(1.4rem, 3vw, 2rem)/1.15 var(--font-display); margin: 0 0 10
 .contact .soon { color: var(--muted); }
 @media (max-width: 480px) { .contact div { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
 
+/* admin */
+.in { width: 100%; font: inherit; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; }
+textarea.in { min-height: 84px; resize: vertical; }
+.field { display: grid; gap: 6px; min-width: 0; }
+.field label { font: 500 .75rem var(--font-mono); color: var(--muted); }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 520px) { .two { grid-template-columns: minmax(0, 1fr); } }
+.form { display: grid; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 18px; min-width: 0; }
+.form .in { background: var(--bg); }
+.form h3 { margin: 0; font: 600 1rem/1.3 var(--font-display); }
+.login { max-width: 26rem; }
+.who { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font: 400 .8rem var(--font-mono); color: var(--muted); margin: 0 0 8px; }
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-block: 16px 24px; }
+.tabs .ctl[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.adm { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 40px); align-items: start; }
+@media (max-width: 800px) { .adm { grid-template-columns: minmax(0, 1fr); } }
+.list { display: grid; min-width: 0; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; padding-block: 12px; border-top: 1px solid var(--line); align-items: center; }
+.row:last-child { border-bottom: 1px solid var(--line); }
+.row.has-img { grid-template-columns: 64px minmax(0, 1fr) auto; }
+.row img { width: 64px; height: 48px; object-fit: cover; border-radius: 3px; display: block; }
+.row .t { overflow-wrap: anywhere; }
+.row .m { font: 400 .75rem var(--font-mono); color: var(--muted); overflow-wrap: anywhere; }
+.acts { display: flex; gap: 8px; }
+.mini { font: 500 .72rem var(--font-mono); background: transparent; color: var(--fg); border: 1px solid var(--line); border-radius: 4px; padding: 5px 9px; cursor: pointer; }
+.mini:hover { border-color: var(--accent); }
+.mini.danger { color: var(--danger); }
+.msg { font: 400 .8rem var(--font-mono); color: var(--muted); min-height: 1.3em; margin: 12px 0 0; }
+.msg.err { color: var(--danger); }
+.hint { font: 400 .8rem var(--font-mono); color: var(--muted); margin: 0; }
+
 footer { border-top: 1px solid var(--line); padding-block: 28px calc(28px + env(safe-area-inset-bottom, 0px)); }
 footer .wrap { display: flex; gap: 8px 24px; flex-wrap: wrap; justify-content: space-between; font: 400 .78rem var(--font-mono); color: var(--muted); }
+footer a { text-decoration: none; }
+footer a:hover { color: var(--fg); }
 
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
 </head>
 <body>
+
 <header class="bar">
   <div class="wrap">
     <a class="brand" href="#home">Drone View <span>Mongolia</span></a>
@@ -176,41 +218,41 @@ footer .wrap { display: flex; gap: 8px 24px; flex-wrap: wrap; justify-content: s
 
 <main id="top">
   <div id="view-home">
-  <div class="hero" id="hero">
-    <canvas id="heroCv" aria-hidden="true"></canvas>
-    <div class="wrap">
-      <div>
-        <p class="eyebrow" data-i18n="eyebrow">4K дрон бичлэг · ашгийн бус</p>
-        <h1 data-i18n="h1">Монголыг дээрээс нь хар</h1>
-        <p class="lead" data-i18n="lead"></p>
-        <div class="actions">
-          <a class="btn" href="#videos" data-i18n="cta_watch">Бичлэг үзэх</a>
-          <a class="btn ghost" href="#photos" data-i18n="cta_photos">Зураг үзэх</a>
+    <div class="hero" id="hero">
+      <canvas id="heroCv" aria-hidden="true"></canvas>
+      <div class="wrap">
+        <div>
+          <p class="eyebrow" data-i18n="eyebrow">4K дрон бичлэг, зураг · ашгийн бус</p>
+          <h1 data-i18n="h1">Монголыг дээрээс нь хар</h1>
+          <p class="lead" data-i18n="lead"></p>
+          <div class="actions">
+            <a class="btn" href="#videos" data-i18n="cta_watch">Бичлэг үзэх</a>
+            <a class="btn ghost" href="#photos" data-i18n="cta_photos">Зураг үзэх</a>
+          </div>
+        </div>
+        <div class="readout" aria-live="off">
+          <span data-i18n="readout_label">Курсорын байрлал</span>
+          <b id="readout">47.9°N 106.9°E</b>
+          <span id="readoutName" data-i18n="readout_default">Улаанбаатар</span>
         </div>
       </div>
-      <div class="readout" aria-live="off">
-        <span data-i18n="readout_label">Курсорын байрлал</span>
-        <b id="readout">47.9°N 106.9°E</b>
-        <span id="readoutName" data-i18n="readout_default">Улаанбаатар</span>
+    </div>
+
+    <section id="videos">
+      <div class="wrap">
+        <h2 data-i18n="videos_h">Бичлэгүүд</h2>
+        <p class="sub" data-i18n="videos_sub"></p>
+        <div class="cards" id="cards"></div>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <section id="videos">
-    <div class="wrap">
-      <h2 data-i18n="videos_h">Бичлэгүүд</h2>
-      <p class="sub" data-i18n="videos_sub"></p>
-      <div class="cards" id="cards"></div>
-    </div>
-  </section>
-
-  <section id="photos">
-    <div class="wrap">
-      <h2 data-i18n="photos_h">Зургууд</h2>
-      <p class="sub" data-i18n="photos_sub"></p>
-      <div class="photos" id="photosGrid"></div>
-    </div>
-  </section>
+    <section id="photos">
+      <div class="wrap">
+        <h2 data-i18n="photos_h">Зургууд</h2>
+        <p class="sub" data-i18n="photos_sub"></p>
+        <div class="photos" id="photosGrid"></div>
+      </div>
+    </section>
   </div>
 
   <div id="view-news" hidden>
@@ -228,7 +270,16 @@ footer .wrap { display: flex; gap: 8px 24px; flex-wrap: wrap; justify-content: s
       <div class="wrap">
         <h2 data-i18n="contact_h">Холбоо барих</h2>
         <p class="sub" data-i18n="contact_sub"></p>
-        <dl class="contact" id="contactList"></dl>
+        <div id="contactList"></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="view-admin" hidden>
+    <section>
+      <div class="wrap">
+        <h2>Админ</h2>
+        <div id="adminRoot"></div>
       </div>
     </section>
   </div>
@@ -238,11 +289,19 @@ footer .wrap { display: flex; gap: 8px 24px; flex-wrap: wrap; justify-content: s
   <div class="wrap">
     <span>© 2026 Drone View Mongolia</span>
     <span data-i18n="footer">Ашгийн бус</span>
+    <a href="#admin">Админ</a>
   </div>
 </footer>
 
+<div class="lb" id="lb" hidden><button class="lb-x" type="button" aria-label="Close">×</button><img alt=""></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 (function () {
+  /* Supabase connection. Both values are public by design (access is limited by the database rules). Leave empty to run on the built-in sample data. */
+  var SUPABASE_URL = "";
+  var SUPABASE_ANON_KEY = "";
+
   var T = {
     mn: {
       nav_home: "Нүүр хуудас", nav_videos: "Видео", nav_news: "Шинэ мэдээ", nav_contact: "Холбоо барих", theme_aria: "Гэрэл / харанхуй",
@@ -254,13 +313,14 @@ footer .wrap { display: flex; gap: 8px 24px; flex-wrap: wrap; justify-content: s
       videos_h: "Бичлэгүүд",
       videos_sub: "Дарж энд тоглуулна. 4K чанараар бүтэн дэлгэцээр үзэхийг хүсвэл YouTube дээр нээнэ үү.",
       photos_h: "Зургууд",
-      photos_sub: "Дроноор авсан зургууд.",
+      photos_sub: "Дроноор авсан зургууд. Дарж томруулна.",
       soon: "Удахгүй", watch: "YouTube дээр үзэх ↗", play: "Тоглуулах", soon_btn: "Удахгүй нэмэгдэнэ",
+      video_empty: "Одоогоор видео алга.", photo_empty: "Одоогоор зураг алга.",
       footer: "Ашгийн бус",
       news_h: "Шинэ мэдээ", news_sub: "Шинэ видео, зураг нэмэгдэх бүрт энд мэдээлнэ.", news_empty: "Одоогоор мэдээ алга.",
       contact_h: "Холбоо барих", contact_sub: "Санал хүсэлт, хамтын ажиллагааны талаар холбогдоорой.",
       c_email: "И-мэйл", c_facebook: "Facebook", c_instagram: "Instagram", c_youtube: "YouTube", c_soon: "Удахгүй нэмнэ",
-      kinds: { lake: "Нуур", desert: "Говь", falls: "Хүрхрээ", mountain: "Уул" },
+      kinds: { lake: "Нуур", steppe: "Хээр тал", desert: "Говь", falls: "Хүрхрээ", mountain: "Уул", forest: "Ой", other: "Бусад" },
       places: {
         khuvsgul: { n: "Хөвсгөл нуур", a: "Хөвсгөл", d: "Монголын хамгийн гүн нуур. Гүн нь 262 м хүрдэг." },
         terkh: { n: "Тэрхийн Цагаан нуур", a: "Архангай", d: "Хорго галт уулын лаавын нөлөөгөөр үүссэн нуур." },
@@ -280,13 +340,14 @@ footer .wrap { display: flex; gap: 8px 24px; flex-wrap: wrap; justify-content: s
       videos_h: "Footage",
       videos_sub: "Press play to watch here, or open on YouTube for full-screen 4K.",
       photos_h: "Photos",
-      photos_sub: "Taken by drone.",
+      photos_sub: "Taken by drone. Tap a photo to enlarge.",
       soon: "Soon", watch: "Open on YouTube ↗", play: "Play", soon_btn: "Coming soon",
+      video_empty: "No videos yet.", photo_empty: "No photos yet.",
       footer: "Non-profit",
       news_h: "News", news_sub: "Updates appear here whenever new videos or photos are added.", news_empty: "No news yet.",
       contact_h: "Contact", contact_sub: "Get in touch with feedback or about working together.",
       c_email: "Email", c_facebook: "Facebook", c_instagram: "Instagram", c_youtube: "YouTube", c_soon: "Coming soon",
-      kinds: { lake: "Lake", desert: "Desert", falls: "Waterfall", mountain: "Mountain" },
+      kinds: { lake: "Lake", steppe: "Steppe", desert: "Desert", falls: "Waterfall", mountain: "Mountain", forest: "Forest", other: "Other" },
       places: {
         khuvsgul: { n: "Lake Khövsgöl", a: "Khövsgöl", d: "Mongolia's deepest lake, reaching 262 m." },
         terkh: { n: "Terkhiin Tsagaan Lake", a: "Arkhangai", d: "A lake formed when lava from the Khorgo volcano dammed a valley." },
@@ -298,19 +359,55 @@ footer .wrap { display: flex; gap: 8px 24px; flex-wrap: wrap; justify-content: s
     }
   };
 
-  /* Paste each YouTube link in url (watch, youtu.be or shorts links all work). An empty url shows "coming soon". */
-  var PLACES = [
-    { id: "khuvsgul", kind: "lake",     seed: 11, lat: "51.0°N", lon: "100.5°E", url: "" },
-    { id: "terkh",    kind: "lake",     seed: 23, lat: "48.2°N", lon: "99.7°E",  url: "" },
-    { id: "khongor",  kind: "desert",   seed: 37, lat: "43.8°N", lon: "102.3°E", url: "" },
-    { id: "orkhon",   kind: "falls",    seed: 41, lat: "46.8°N", lon: "102.0°E", url: "" },
-    { id: "altai",    kind: "mountain", seed: 59, lat: "49.1°N", lon: "87.8°E",  url: "" },
-    { id: "terelj",   kind: "mountain", seed: 67, lat: "47.9°N", lon: "107.5°E", url: "" }
+  /* Built-in sample content, shown only while Supabase is not connected. */
+  var SAMPLE_PLACES = [
+    { id: "khuvsgul", kind: "lake",     seed: 11, lat: "51.0°N", lon: "100.5°E" },
+    { id: "terkh",    kind: "lake",     seed: 23, lat: "48.2°N", lon: "99.7°E" },
+    { id: "khongor",  kind: "desert",   seed: 37, lat: "43.8°N", lon: "102.3°E" },
+    { id: "orkhon",   kind: "falls",    seed: 41, lat: "46.8°N", lon: "102.0°E" },
+    { id: "altai",    kind: "mountain", seed: 59, lat: "49.1°N", lon: "87.8°E" },
+    { id: "terelj",   kind: "mountain", seed: 67, lat: "47.9°N", lon: "107.5°E" }
+  ];
+  var SAMPLE_VIDEOS = SAMPLE_PLACES.map(function (p) {
+    var m = T.mn.places[p.id], e = T.en.places[p.id];
+    return { id: p.id, url: "", kind: p.kind, seed: p.seed, lat: p.lat, lon: p.lon,
+      title_mn: m.n, title_en: e.n, desc_mn: m.d, desc_en: e.d, aimag_mn: m.a, aimag_en: e.a };
+  });
+  var SAMPLE_PHOTOS = ["khuvsgul", "altai", "khongor", "terelj", "orkhon", "terkh"].map(function (id, i) {
+    return { id: id, url: "", seed: 111 + i * 12, title_mn: T.mn.places[id].n, title_en: T.en.places[id].n };
+  });
+  var CONTACT_KEYS = ["email", "facebook", "instagram", "youtube"];
+  var SAMPLE_CONTACTS = [
+    { id: "email", value: "" },
+    { id: "facebook", value: "https://www.facebook.com/profile.php?id=61593387313914" },
+    { id: "instagram", value: "" },
+    { id: "youtube", value: "" }
   ];
 
   var root = document.documentElement;
   var lang = "mn";
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var sb = (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+  var mode = "sample";
+  var data = { videos: SAMPLE_VIDEOS, photos: SAMPLE_PHOTOS, news: [], contacts: SAMPLE_CONTACTS };
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function pick(o, k) { return o[k + "_" + lang] || o[k + "_mn"] || ""; }
+  function hs(str) {
+    var h = 0, s = String(str);
+    for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+    return Math.abs(h) % 900 + 10;
+  }
+  function ytId(u) {
+    if (!u) return "";
+    var m = String(u).match(/(?:youtu\.be\/|[?&]v=|\/shorts\/|\/embed\/|\/live\/)([A-Za-z0-9_-]{11})/);
+    if (m) return m[1];
+    return /^[A-Za-z0-9_-]{11}$/.test(String(u).trim()) ? String(u).trim() : "";
+  }
 
   /* ---------- contour field ---------- */
   function noise(x, y, seed) {
@@ -417,40 +514,60 @@ footer .wrap { display: flex; gap: 8px 24px; flex-wrap: wrap; justify-content: s
     ron.textContent = T[lang].readout_default;
   });
 
-  /* ---------- cards ---------- */
+  /* ---------- video cards ---------- */
   var cardsEl = document.getElementById("cards");
-  function ytId(u) {
-    if (!u) return "";
-    var m = String(u).match(/(?:youtu\.be\/|[?&]v=|\/shorts\/|\/embed\/|\/live\/)([A-Za-z0-9_-]{11})/);
-    if (m) return m[1];
-    return /^[A-Za-z0-9_-]{11}$/.test(u) ? u : "";
-  }
   function renderCards() {
     var t = T[lang];
-    cardsEl.innerHTML = PLACES.map(function (p) {
-      var info = t.places[p.id], id = ytId(p.url), media, btn;
+    if (!data.videos.length) { cardsEl.innerHTML = '<div class="empty">' + t.video_empty + "</div>"; return; }
+    cardsEl.innerHTML = data.videos.map(function (v) {
+      var id = ytId(v.url), title = esc(pick(v, "title")), desc = esc(pick(v, "desc")), media, btn;
       if (id) {
-        media = '<button class="play" type="button" data-yt="' + id + '" data-title="' + info.n + '" aria-label="' + t.play + ": " + info.n + '">' +
+        media = '<button class="play" type="button" data-yt="' + id + '" data-title="' + title + '" aria-label="' + t.play + ": " + title + '">' +
           '<img src="https://i.ytimg.com/vi/' + id + '/hqdefault.jpg" alt="" loading="lazy"><span class="tri" aria-hidden="true"></span></button>' +
           '<div class="tags"><span class="tag">4K</span></div>';
         btn = '<a class="btn ghost" href="https://www.youtube.com/watch?v=' + id + '" target="_blank" rel="noopener">' + t.watch + "</a>";
       } else {
-        media = '<canvas data-seed="' + p.seed + '" aria-hidden="true"></canvas><div class="tags"><span class="tag">4K</span><span class="tag">' + t.soon + "</span></div>";
+        media = '<canvas data-seed="' + (v.seed || hs(v.id)) + '" aria-hidden="true"></canvas><div class="tags"><span class="tag">4K</span><span class="tag">' + t.soon + "</span></div>";
         btn = '<span class="btn ghost" aria-disabled="true">' + t.soon_btn + "</span>";
       }
+      var where = [pick(v, "aimag"), [v.lat, v.lon].filter(Boolean).join(" ")].filter(Boolean).join(" · ");
       return '<article class="card"><div class="thumb">' + media + "</div>" +
-        '<div class="body"><span class="kind">' + t.kinds[p.kind] + "</span><h3>" + info.n + "</h3><p>" + info.d + "</p>" +
-        '<span class="coord">' + info.a + " · " + p.lat + " " + p.lon + "</span>" + btn + "</div></article>";
+        '<div class="body"><span class="kind">' + esc(t.kinds[v.kind] || t.kinds.other) + "</span><h3>" + title + "</h3>" +
+        (desc ? "<p>" + desc + "</p>" : "") +
+        (where ? '<span class="coord">' + esc(where) + "</span>" : "") + btn + "</div></article>";
     }).join("");
-    paintCards();
   }
   cardsEl.addEventListener("click", function (e) {
     var b = e.target.closest(".play");
     if (!b) return;
-    var th = b.parentNode;
-    th.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + b.getAttribute("data-yt") + '?autoplay=1&rel=0" title="' + b.getAttribute("data-title") +
+    b.parentNode.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + b.getAttribute("data-yt") + '?autoplay=1&rel=0" title="' + b.getAttribute("data-title") +
       '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
   });
+
+  /* ---------- photos ---------- */
+  var photosEl = document.getElementById("photosGrid");
+  function renderPhotos() {
+    var t = T[lang];
+    if (!data.photos.length) { photosEl.innerHTML = '<div class="empty">' + t.photo_empty + "</div>"; return; }
+    photosEl.innerHTML = data.photos.map(function (p) {
+      var title = esc(pick(p, "title"));
+      var inner = p.url
+        ? '<button class="ph-btn" type="button" data-full="' + esc(p.url) + '" aria-label="' + title + '"><img src="' + esc(p.url) + '" alt="' + title + '" loading="lazy"></button>'
+        : '<canvas data-seed="' + (p.seed || hs(p.id)) + '" aria-hidden="true"></canvas><div class="tags"><span class="tag">' + t.soon + "</span></div>";
+      return '<figure class="photo"><div class="ph">' + inner + "</div>" + (title ? "<figcaption><b>" + title + "</b></figcaption>" : "") + "</figure>";
+    }).join("");
+  }
+  var lb = document.getElementById("lb"), lbImg = lb.querySelector("img");
+  function closeLb() { lb.hidden = true; lbImg.removeAttribute("src"); }
+  photosEl.addEventListener("click", function (e) {
+    var b = e.target.closest(".ph-btn");
+    if (!b) return;
+    lbImg.src = b.getAttribute("data-full");
+    lb.hidden = false;
+  });
+  lb.addEventListener("click", closeLb);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !lb.hidden) closeLb(); });
+
   function paintCards() {
     var cvs = document.querySelectorAll("#cards canvas, #photosGrid canvas");
     for (var i = 0; i < cvs.length; i++) {
@@ -458,10 +575,63 @@ footer .wrap { display: flex; gap: 8px 24px; flex-wrap: wrap; justify-content: s
     }
   }
 
-  /* ---------- language ---------- */
+  /* ---------- news and contact ---------- */
+  function renderNews() {
+    var t = T[lang], el = document.getElementById("newsList");
+    el.innerHTML = data.news.length
+      ? '<div class="news">' + data.news.map(function (n) {
+          var body = pick(n, "body");
+          return "<article><time>" + esc(n.date) + "</time><h3>" + esc(pick(n, "title")) + "</h3>" + (body ? "<p>" + esc(body) + "</p>" : "") + "</article>";
+        }).join("") + "</div>"
+      : '<div class="empty">' + t.news_empty + "</div>";
+  }
+  function renderContacts() {
+    var t = T[lang], el = document.getElementById("contactList");
+    var rows = data.contacts;
+    if (mode === "db") rows = rows.filter(function (c) { return c.value; });
+    if (!rows.length) { el.innerHTML = '<div class="empty">' + t.c_soon + "</div>"; return; }
+    el.innerHTML = '<dl class="contact">' + rows.map(function (c) {
+      var v = c.value, out;
+      if (!v) out = '<span class="soon">' + t.c_soon + "</span>";
+      else if (/^https?:\/\//i.test(v)) out = '<a href="' + esc(v) + '" target="_blank" rel="noopener">' + esc(v.replace(/^https?:\/\/(www\.)?/i, "")) + "</a>";
+      else if (v.indexOf("@") > 0) out = '<a href="mailto:' + esc(v) + '">' + esc(v) + "</a>";
+      else out = esc(v);
+      return "<div><dt>" + t["c_" + c.id] + "</dt><dd>" + out + "</dd></div>";
+    }).join("") + "</dl>";
+  }
+
+  function renderAll() {
+    renderNews();
+    renderContacts();
+    renderPhotos();
+    renderCards();
+    paintCards();
+  }
+
+  /* ---------- data from Supabase ---------- */
+  function loadData() {
+    if (!sb) return Promise.resolve();
+    return Promise.all([
+      sb.from("videos").select("*").order("created_at", { ascending: false }),
+      sb.from("photos").select("*").order("created_at", { ascending: false }),
+      sb.from("news").select("*").order("date", { ascending: false }).order("created_at", { ascending: false }),
+      sb.from("contacts").select("*")
+    ]).then(function (r) {
+      for (var i = 0; i < r.length; i++) if (r[i].error) throw r[i].error;
+      var map = {};
+      r[3].data.forEach(function (c) { map[c.key] = c.value; });
+      data = {
+        videos: r[0].data, photos: r[1].data, news: r[2].data,
+        contacts: CONTACT_KEYS.map(function (k) { return { id: k, value: map[k] || "" }; })
+      };
+      mode = "db";
+    }).catch(function (e) { if (window.console) console.warn("Supabase:", e); });
+  }
+
+  /* ---------- language and theme ---------- */
   function applyLang() {
     var t = T[lang];
-    root.lang = lang === "mn" ? "mn" : "en";
+    root.lang = lang;
     document.querySelectorAll("[data-i18n]").forEach(function (el) {
       var k = el.getAttribute("data-i18n");
       if (t[k] !== undefined) el.textContent = t[k];
@@ -470,18 +640,13 @@ footer .wrap { display: flex; gap: 8px 24px; flex-wrap: wrap; justify-content: s
       el.setAttribute("aria-label", t[el.getAttribute("data-i18n-aria")]);
     });
     document.getElementById("langBtn").textContent = lang === "mn" ? "EN" : "МН";
-    renderNews();
-    renderContacts();
-    renderPhotos();
-    renderCards();
+    renderAll();
   }
   document.getElementById("langBtn").addEventListener("click", function () {
     lang = lang === "mn" ? "en" : "mn";
     try { localStorage.setItem("dvm-lang", lang); } catch (e) {}
     applyLang();
   });
-
-  /* ---------- theme ---------- */
   function currentTheme() {
     var a = root.getAttribute("data-theme");
     if (a) return a;
@@ -500,62 +665,257 @@ footer .wrap { display: flex; gap: 8px 24px; flex-wrap: wrap; justify-content: s
   });
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", refreshArt);
 
-  /* ---------- photos ---------- */
-  /* Put each real photo in img (a file path published with the page). An empty img shows a placeholder. */
-  var photosEl = document.getElementById("photosGrid");
-  var PHOTOS = [
-    { id: "khuvsgul", seed: 111, img: "" },
-    { id: "altai",    seed: 159, img: "" },
-    { id: "khongor",  seed: 137, img: "" },
-    { id: "terelj",   seed: 167, img: "" },
-    { id: "orkhon",   seed: 141, img: "" },
-    { id: "terkh",    seed: 123, img: "" }
-  ];
-  function renderPhotos() {
-    var t = T[lang];
-    photosEl.innerHTML = PHOTOS.map(function (p) {
-      var info = t.places[p.id];
-      var inner = p.img
-        ? '<img src="' + p.img + '" alt="' + info.n + '" loading="lazy">'
-        : '<canvas data-seed="' + p.seed + '" aria-hidden="true"></canvas><div class="tags"><span class="tag">' + t.soon + "</span></div>";
-      return '<figure class="photo"><div class="ph">' + inner + "</div><figcaption><b>" + info.n + "</b> · " + info.a + "</figcaption></figure>";
-    }).join("");
+  /* ---------- admin ---------- */
+  var adminEl = document.getElementById("adminRoot");
+  var session = null, tab = "videos", editing = null, adminMsg = "", adminErr = false, busy = false, loaded = false;
+  var TABS = [["videos", "Видео"], ["photos", "Зураг"], ["news", "Мэдээ"], ["contacts", "Холбоо барих"]];
+  var KIND_OPTS = [["lake", "Нуур"], ["steppe", "Хээр тал"], ["desert", "Говь"], ["falls", "Хүрхрээ"], ["mountain", "Уул"], ["forest", "Ой"], ["other", "Бусад"]];
+
+  function inp(name, label, val, o) {
+    o = o || {};
+    return '<div class="field"><label for="f_' + name + '">' + label + '</label><input class="in" id="f_' + name + '" name="' + name + '" type="' + (o.type || "text") + '" value="' + esc(val) + '"' +
+      (o.req ? " required" : "") + (o.ph ? ' placeholder="' + esc(o.ph) + '"' : "") + (o.auto ? ' autocomplete="' + o.auto + '"' : "") + "></div>";
+  }
+  function area(name, label, val) {
+    return '<div class="field"><label for="f_' + name + '">' + label + '</label><textarea class="in" id="f_' + name + '" name="' + name + '">' + esc(val) + "</textarea></div>";
+  }
+  function kindSelect(val) {
+    return '<div class="field"><label for="f_kind">Төрөл</label><select class="in" id="f_kind" name="kind">' +
+      KIND_OPTS.map(function (k) { return '<option value="' + k[0] + '"' + (k[0] === (val || "other") ? " selected" : "") + ">" + k[1] + "</option>"; }).join("") + "</select></div>";
+  }
+  function formButtons(isEdit) {
+    return '<div class="actions" style="margin-top:0"><button class="btn" type="submit">' + (isEdit ? "Хадгалах" : "Нэмэх") + "</button>" +
+      (isEdit ? '<button class="btn ghost" type="button" data-act="cancel">Болих</button>' : "") + "</div>";
+  }
+  function current(type) {
+    if (!editing || editing.type !== type) return null;
+    return data[type].filter(function (x) { return x.id === editing.id; })[0] || null;
   }
 
-  /* ---------- news and contact ---------- */
-  /* News: add { date: "2026-10-10", t: { mn: "...", en: "..." }, d: { mn: "...", en: "..." } }. */
-  var NEWS = [];
-  /* Contact: fill value with an address or a full https link. An empty value shows "coming soon". */
-  var CONTACTS = [
-    { id: "email", value: "" },
-    { id: "facebook", value: "https://www.facebook.com/profile.php?id=61593387313914" },
-    { id: "instagram", value: "" },
-    { id: "youtube", value: "" }
-  ];
-  function renderNews() {
-    var t = T[lang], el = document.getElementById("newsList");
-    el.innerHTML = NEWS.length
-      ? '<div class="news">' + NEWS.map(function (n) {
-          return "<article><time>" + n.date + "</time><h3>" + n.t[lang] + "</h3><p>" + n.d[lang] + "</p></article>";
-        }).join("") + "</div>"
-      : '<div class="empty">' + t.news_empty + "</div>";
+  function videoForm() {
+    var v = current("videos") || {};
+    return '<form class="form" data-type="videos"><h3>' + (v.id ? "Видео засах" : "Шинэ видео") + "</h3>" +
+      inp("url", "YouTube линк", v.url, { type: "url", req: 1, ph: "https://youtu.be/..." }) +
+      '<div class="two">' + inp("title_mn", "Гарчиг (монгол)", v.title_mn, { req: 1 }) + inp("title_en", "Гарчиг (англи)", v.title_en) + "</div>" +
+      '<div class="two">' + area("desc_mn", "Тайлбар (монгол)", v.desc_mn) + area("desc_en", "Тайлбар (англи)", v.desc_en) + "</div>" +
+      '<div class="two">' + kindSelect(v.kind) + inp("aimag_mn", "Аймаг, газар (монгол)", v.aimag_mn) + "</div>" +
+      '<div class="two">' + inp("aimag_en", "Аймаг, газар (англи)", v.aimag_en) + inp("lat", "Өргөрөг", v.lat, { ph: "51.0°N" }) + "</div>" +
+      inp("lon", "Уртраг", v.lon, { ph: "100.5°E" }) + formButtons(!!v.id) + "</form>";
   }
-  function renderContacts() {
-    var t = T[lang];
-    document.getElementById("contactList").innerHTML = CONTACTS.map(function (c) {
-      var v = c.value
-        ? (/^https?:\/\//.test(c.value) ? '<a href="' + c.value + '" target="_blank" rel="noopener">' + c.value.replace(/^https?:\/\//, "") + "</a>" : (c.value.indexOf("@") > 0 ? '<a href="mailto:' + c.value + '">' + c.value + "</a>" : c.value))
-        : '<span class="soon">' + t.c_soon + "</span>";
-      return "<div><dt>" + t["c_" + c.id] + "</dt><dd>" + v + "</dd></div>";
-    }).join("");
+  function photoForm() {
+    return '<form class="form" data-type="photos"><h3>Шинэ зураг</h3>' +
+      '<div class="field"><label for="f_files">Зураг сонгох (олныг нэг дор болно)</label><input class="in" id="f_files" name="files" type="file" accept="image/*" multiple required></div>' +
+      '<div class="two">' + inp("title_mn", "Тайлбар (монгол, заавал биш)", "") + inp("title_en", "Тайлбар (англи, заавал биш)", "") + "</div>" +
+      '<p class="hint">Зургийг оруулахын өмнө автоматаар жижигрүүлнэ (урт тал нь 1920 px хүртэл).</p>' +
+      '<div class="actions" style="margin-top:0"><button class="btn" type="submit">Оруулах</button></div></form>';
+  }
+  function newsForm() {
+    var n = current("news") || {};
+    var today = new Date().toISOString().slice(0, 10);
+    return '<form class="form" data-type="news"><h3>' + (n.id ? "Мэдээ засах" : "Шинэ мэдээ") + "</h3>" +
+      inp("date", "Огноо", n.date || today, { type: "date", req: 1 }) +
+      '<div class="two">' + inp("title_mn", "Гарчиг (монгол)", n.title_mn, { req: 1 }) + inp("title_en", "Гарчиг (англи)", n.title_en) + "</div>" +
+      '<div class="two">' + area("body_mn", "Агуулга (монгол)", n.body_mn) + area("body_en", "Агуулга (англи)", n.body_en) + "</div>" +
+      formButtons(!!n.id) + "</form>";
+  }
+  function contactForm() {
+    var labels = { email: "И-мэйл хаяг", facebook: "Facebook линк", instagram: "Instagram линк", youtube: "YouTube сувгийн линк" };
+    return '<form class="form" data-type="contacts"><h3>Холбоо барих мэдээлэл</h3>' +
+      data.contacts.map(function (c) { return inp(c.id, labels[c.id], c.value, { ph: c.id === "email" ? "name@example.com" : "https://..." }); }).join("") +
+      '<p class="hint">Хоосон үлдээсэн мөр сайт дээр харагдахгүй.</p>' +
+      '<div class="actions" style="margin-top:0"><button class="btn" type="submit">Хадгалах</button></div></form>';
+  }
+
+  function rowActs(type, id, canEdit) {
+    return '<div class="acts">' + (canEdit ? '<button class="mini" type="button" data-act="edit" data-type="' + type + '" data-id="' + esc(id) + '">Засах</button>' : "") +
+      '<button class="mini danger" type="button" data-act="del" data-type="' + type + '" data-id="' + esc(id) + '">Устгах</button></div>';
+  }
+  function listHtml() {
+    var rows = "";
+    if (tab === "videos") {
+      rows = data.videos.map(function (v) {
+        return '<div class="row"><div><div class="t">' + esc(v.title_mn) + '</div><div class="m">' + esc(v.url) + "</div></div>" + rowActs("videos", v.id, true) + "</div>";
+      }).join("");
+    } else if (tab === "photos") {
+      rows = data.photos.map(function (p) {
+        return '<div class="row has-img"><img src="' + esc(p.url) + '" alt=""><div><div class="t">' + esc(p.title_mn || "Нэргүй зураг") + "</div></div>" + rowActs("photos", p.id, false) + "</div>";
+      }).join("");
+    } else if (tab === "news") {
+      rows = data.news.map(function (n) {
+        return '<div class="row"><div><div class="t">' + esc(n.title_mn) + '</div><div class="m">' + esc(n.date) + "</div></div>" + rowActs("news", n.id, true) + "</div>";
+      }).join("");
+    }
+    if (tab === "contacts") return '<p class="hint">Сайтын "Холбоо барих" хуудсанд энд бичсэн мэдээлэл харагдана.</p>';
+    return rows ? '<div class="list">' + rows + "</div>" : '<div class="empty">Одоогоор юу ч алга. Зүүн талын хэсгээр нэмнэ үү.</div>';
+  }
+
+  function renderAdmin() {
+    if (!sb) {
+      adminEl.innerHTML = '<div class="empty">Админ хараахан тохируулаагүй байна. Supabase-ийн холболтыг <code>index.html</code>-д нэмсний дараа энд нэвтрэх хэсэг гарна.</div>';
+      return;
+    }
+    if (!session) {
+      adminEl.innerHTML = '<form class="form login" data-type="login"><h3>Нэвтрэх</h3>' +
+        inp("email", "И-мэйл", "", { type: "email", req: 1, auto: "username" }) +
+        inp("password", "Нууц үг", "", { type: "password", req: 1, auto: "current-password" }) +
+        '<div class="actions" style="margin-top:0"><button class="btn" type="submit">Нэвтрэх</button></div>' +
+        '<p class="msg' + (adminErr ? " err" : "") + '" id="admMsg">' + esc(adminMsg) + "</p></form>";
+      return;
+    }
+    if (!loaded) { adminEl.innerHTML = '<p class="hint">Ачаалж байна...</p>'; return; }
+    if (mode !== "db") {
+      adminEl.innerHTML = '<p class="who">' + esc(session.user.email) + ' <button class="mini" type="button" data-act="logout">Гарах</button></p>' +
+        '<div class="empty">Мэдээллийн сантай холбогдож чадсангүй. Supabase-ийн SQL тохиргоог (supabase-setup.sql) ажиллуулсан эсэхээ шалгаад хуудсаа дахин ачаална уу.</div>';
+      return;
+    }
+    var panel = tab === "videos" ? videoForm() : tab === "photos" ? photoForm() : tab === "news" ? newsForm() : contactForm();
+    adminEl.innerHTML = '<p class="who">' + esc(session.user.email) + ' <button class="mini" type="button" data-act="logout">Гарах</button></p>' +
+      '<div class="tabs">' + TABS.map(function (x) {
+        return '<button class="ctl" type="button" data-act="tab" data-tab="' + x[0] + '" aria-pressed="' + (x[0] === tab) + '">' + x[1] + "</button>";
+      }).join("") + "</div>" +
+      '<div class="adm"><div>' + panel + '<p class="msg' + (adminErr ? " err" : "") + '" id="admMsg">' + esc(adminMsg) + "</p></div><div>" + listHtml() + "</div></div>";
+  }
+  function say(text, isErr) {
+    adminMsg = text; adminErr = !!isErr;
+    var el = document.getElementById("admMsg");
+    if (el) { el.textContent = text; el.className = "msg" + (isErr ? " err" : ""); }
+  }
+  function reload() {
+    return loadData().then(function () { renderAll(); renderAdmin(); });
+  }
+  function fail(e) { busy = false; say("Алдаа гарлаа: " + (e && e.message ? e.message : e), true); }
+
+  function shrink(file, max) {
+    return new Promise(function (res, rej) {
+      var img = new Image(), u = URL.createObjectURL(file);
+      img.onload = function () {
+        var s = Math.min(1, max / Math.max(img.width, img.height));
+        var c = document.createElement("canvas");
+        c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(u);
+        c.toBlob(function (b) { b ? res(b) : rej(new Error("Зургийг хөрвүүлж чадсангүй")); }, "image/jpeg", 0.86);
+      };
+      img.onerror = function () { URL.revokeObjectURL(u); rej(new Error("Зургийг уншиж чадсангүй: " + file.name)); };
+      img.src = u;
+    });
+  }
+  function formValues(form, keys) {
+    var out = {};
+    keys.forEach(function (k) {
+      var el = form.elements[k];
+      var v = el ? String(el.value).trim() : "";
+      out[k] = v === "" ? null : v;
+    });
+    return out;
+  }
+  function save(type, payload) {
+    var id = editing && editing.type === type ? editing.id : null;
+    var q = id ? sb.from(type).update(payload).eq("id", id) : sb.from(type).insert(payload);
+    return q.then(function (r) {
+      if (r.error) throw r.error;
+      editing = null;
+      busy = false;
+      adminMsg = id ? "Хадгаллаа." : "Нэмлээ."; adminErr = false;
+      return reload();
+    });
+  }
+
+  adminEl.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (busy) return;
+    var form = e.target, type = form.getAttribute("data-type");
+    if (type === "login") {
+      busy = true; say("Нэвтэрч байна...");
+      sb.auth.signInWithPassword({ email: form.elements.email.value.trim(), password: form.elements.password.value }).then(function (r) {
+        busy = false;
+        if (r.error) { say("Нэвтэрч чадсангүй. И-мэйл эсвэл нууц үгээ шалгана уу.", true); return; }
+        adminMsg = ""; adminErr = false;
+      }, fail);
+      return;
+    }
+    if (type === "videos") {
+      var p = formValues(form, ["url", "title_mn", "title_en", "desc_mn", "desc_en", "kind", "aimag_mn", "aimag_en", "lat", "lon"]);
+      if (!ytId(p.url)) { say("YouTube линк буруу байна. youtu.be/... эсвэл youtube.com/watch?v=... хэлбэртэй линк оруулна уу.", true); return; }
+      busy = true; say("Хадгалж байна...");
+      save("videos", p).catch(fail);
+    } else if (type === "news") {
+      var n = formValues(form, ["date", "title_mn", "title_en", "body_mn", "body_en"]);
+      busy = true; say("Хадгалж байна...");
+      save("news", n).catch(fail);
+    } else if (type === "contacts") {
+      var rows = CONTACT_KEYS.map(function (k) { return { key: k, value: String(form.elements[k].value).trim() }; });
+      busy = true; say("Хадгалж байна...");
+      sb.from("contacts").upsert(rows).then(function (r) {
+        if (r.error) throw r.error;
+        busy = false; adminMsg = "Хадгаллаа."; adminErr = false;
+        return reload();
+      }).catch(fail);
+    } else if (type === "photos") {
+      var files = Array.prototype.slice.call(form.elements.files.files);
+      var t = formValues(form, ["title_mn", "title_en"]);
+      if (!files.length) return;
+      busy = true;
+      var done = 0;
+      files.reduce(function (chain, file) {
+        return chain.then(function () {
+          say("Оруулж байна " + (done + 1) + " / " + files.length + "...");
+          return shrink(file, 1920).then(function (blob) {
+            var path = Date.now() + "-" + Math.random().toString(36).slice(2, 8) + ".jpg";
+            return sb.storage.from("photos").upload(path, blob, { contentType: "image/jpeg" }).then(function (r) {
+              if (r.error) throw r.error;
+              var url = sb.storage.from("photos").getPublicUrl(path).data.publicUrl;
+              return sb.from("photos").insert({ url: url, path: path, title_mn: t.title_mn, title_en: t.title_en });
+            }).then(function (r) { if (r.error) throw r.error; done++; });
+          });
+        });
+      }, Promise.resolve()).then(function () {
+        busy = false; adminMsg = done + " зураг нэмлээ."; adminErr = false;
+        return reload();
+      }).catch(function (err) {
+        busy = false;
+        say("Алдаа гарлаа (" + done + " зураг орсон): " + (err && err.message ? err.message : err), true);
+        reload();
+      });
+    }
+  });
+
+  adminEl.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-act]");
+    if (!b || busy) return;
+    var act = b.getAttribute("data-act");
+    if (act === "tab") { tab = b.getAttribute("data-tab"); editing = null; adminMsg = ""; renderAdmin(); }
+    else if (act === "cancel") { editing = null; adminMsg = ""; renderAdmin(); }
+    else if (act === "logout") { sb.auth.signOut(); }
+    else if (act === "edit") {
+      editing = { type: b.getAttribute("data-type"), id: b.getAttribute("data-id") };
+      adminMsg = ""; renderAdmin();
+      var f = adminEl.querySelector("form"); if (f && f.scrollIntoView) f.scrollIntoView({ block: "start" });
+    } else if (act === "del") {
+      var type = b.getAttribute("data-type"), id = b.getAttribute("data-id");
+      if (!window.confirm("Устгах уу? Үүнийг буцаах боломжгүй.")) return;
+      busy = true; say("Устгаж байна...");
+      var item = data[type].filter(function (x) { return x.id === id; })[0];
+      var pre = (type === "photos" && item && item.path) ? sb.storage.from("photos").remove([item.path]) : Promise.resolve({});
+      pre.then(function () { return sb.from(type).delete().eq("id", id); }).then(function (r) {
+        if (r.error) throw r.error;
+        busy = false; editing = null; adminMsg = "Устгалаа."; adminErr = false;
+        return reload();
+      }).catch(fail);
+    }
+  });
+
+  if (sb) {
+    sb.auth.getSession().then(function (r) { session = r.data.session; renderAdmin(); });
+    sb.auth.onAuthStateChange(function (ev, s) { session = s; if (!s) editing = null; renderAdmin(); });
   }
 
   /* ---------- pages ---------- */
   var navLinks = document.querySelectorAll("nav a[data-route]");
   function route() {
     var h = location.hash.replace("#", "");
-    var view = h === "news" || h === "contact" ? h : "home";
-    ["home", "news", "contact"].forEach(function (v) { document.getElementById("view-" + v).hidden = v !== view; });
+    var view = h === "news" || h === "contact" || h === "admin" ? h : "home";
+    ["home", "news", "contact", "admin"].forEach(function (v) { document.getElementById("view-" + v).hidden = v !== view; });
     navLinks.forEach(function (a) {
       if (a.getAttribute("data-route") === view) a.setAttribute("aria-current", "page");
       else a.removeAttribute("aria-current");
@@ -571,7 +931,6 @@ footer .wrap { display: flex; gap: 8px 24px; flex-wrap: wrap; justify-content: s
   }
   window.addEventListener("hashchange", route);
 
-  /* ---------- resize ---------- */
   var rt;
   window.addEventListener("resize", function () {
     clearTimeout(rt);
@@ -586,9 +945,10 @@ footer .wrap { display: flex; gap: 8px 24px; flex-wrap: wrap; justify-content: s
     if (st === "light" || st === "dark") { root.setAttribute("data-theme", st); COL = readColors(); }
   } catch (e) {}
   applyLang();
+  renderAdmin();
   route();
+  loadData().then(function () { loaded = true; renderAll(); renderAdmin(); });
 })();
 </script>
-
 </body>
 </html>
